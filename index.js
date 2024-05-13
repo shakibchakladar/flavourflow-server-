@@ -43,12 +43,24 @@ async function run() {
     })
 
     // purchase
+
+    app.get("/purchase",async(req,res)=>{
+      // console.log(req.query.email);
+      let query={}
+      if(req.query?.email){
+        query={email:req.query.email}
+      }
+      const result=await purchaseCollection.find(query).toArray();
+      res.send(result);
+    })
+
     app.post("/purchase",async(req,res)=>{
       const purchase=req.body;
       console.log(purchase);
       const result=await purchaseCollection.insertOne(purchase);
       res.send(result);
     })
+
     
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
