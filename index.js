@@ -27,6 +27,7 @@ async function run() {
 
 
     const foodCollection=client.db('flavorflow').collection('foods');
+    const purchaseCollection=client.db('flavorflow').collection('purchase')
     // get all foods data 
     app.get('/foods',async(req,res)=>{
       const cursor=foodCollection.find();
@@ -40,8 +41,15 @@ async function run() {
       const result=await foodCollection.findOne({_id:new ObjectId(req.params.id)})
       res.send(result);
     })
-    
 
+    // purchase
+    app.post("/purchase",async(req,res)=>{
+      const purchase=req.body;
+      console.log(purchase);
+      const result=await purchaseCollection.insertOne(purchase);
+      res.send(result);
+    })
+    
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
