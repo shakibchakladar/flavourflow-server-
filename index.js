@@ -29,6 +29,14 @@ async function run() {
     const foodCollection=client.db('flavorflow').collection('foods');
     const purchaseCollection=client.db('flavorflow').collection('purchase')
 
+
+    app.get("/myfood/:email",async(req,res)=>{
+      // console.log(req.params.email);
+      const result=await foodCollection.find({email:req.params.email}).toArray()
+      res.send(result)
+
+    })
+
     // add food
     app.post("/addfood",async(req,res)=>{
       // console.log(req.body);
@@ -64,7 +72,7 @@ async function run() {
 
     app.post("/purchase",async(req,res)=>{
       const purchase=req.body;
-      console.log(purchase);
+      // console.log(purchase);
       const result=await purchaseCollection.insertOne(purchase);
       res.send(result);
     })
