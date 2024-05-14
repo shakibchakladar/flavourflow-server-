@@ -28,6 +28,14 @@ async function run() {
 
     const foodCollection=client.db('flavorflow').collection('foods');
     const purchaseCollection=client.db('flavorflow').collection('purchase')
+
+    // add food
+    app.post("/addfood",async(req,res)=>{
+      // console.log(req.body);
+      const result=await foodCollection.insertOne(req.body);
+      res.send(result);
+
+    })
     // get all foods data 
     app.get('/foods',async(req,res)=>{
       const cursor=foodCollection.find();
