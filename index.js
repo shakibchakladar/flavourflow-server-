@@ -60,6 +60,21 @@ async function run() {
 
     const foodCollection=client.db('flavorflow').collection('foods');
     const purchaseCollection=client.db('flavorflow').collection('purchase')
+    const feedbackCollection=client.db('flavorflow').collection('feedbacks')
+
+    app.get("/feedback",async(req,res)=>{
+      const cursor=feedbackCollection.find();
+      const result=await cursor.toArray();
+      res.send(result);
+    })
+
+
+    app.post("/feedback",async(req,res)=>{
+      const feedback=req.body;
+      console.log(feedback);
+      const result=await feedbackCollection.insertOne(feedback);
+      res.send(result);
+    })
 
     // auth related api
     app.post("/jwt",logger, async(req,res)=>{
