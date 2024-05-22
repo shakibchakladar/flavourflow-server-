@@ -11,6 +11,7 @@ const port=process.env.PORT ||5000;
 app.use(cors({
   origin:[
     'http://localhost:5173',
+    'http://localhost:5174',
     'https://flavorflow-6eaef.web.app',
     'https://flavorflow-6eaef.firebaseapp.com'
   ],
@@ -61,6 +62,7 @@ async function run() {
     const foodCollection=client.db('flavorflow').collection('foods');
     const purchaseCollection=client.db('flavorflow').collection('purchase')
     const feedbackCollection=client.db('flavorflow').collection('feedbacks')
+    const topFoodCollection=client.db('flavorflow').collection('topfood')
 
     app.get("/feedback",async(req,res)=>{
       const cursor=feedbackCollection.find();
@@ -115,6 +117,27 @@ async function run() {
       res.send(result);
 
     })
+
+
+    // update -----------
+    app.put("/myfood/:id",async(req,res)=>{
+      const id=req.params.id;
+      const filter={_id: new ObjectId(id)}
+      const options={upsert: true}
+      const updatedFood=req.body;
+      const food={
+        $set: {
+          img: updatedFood.img,
+           name: updatedFood.name,
+            origin: updatedFood.origin,
+             price: updatedFood.price
+        }
+      }
+
+      const result=await foodCollection.updateOne(filter,food,options)
+      res.send(result)
+
+    })
     // get all foods data 
     app.get('/foods',async(req,res)=>{
       const cursor=foodCollection.find();
@@ -122,7 +145,22 @@ async function run() {
       res.send(result);
     })
 
+    app.get('/topfood',async(req,res)=>{
+      const cursor=topFoodCollection.find();
+      const result=await cursor.toArray();
+      res.send(result)
+    })
 
+    app.get('/topfood/:id', async (req, res) => {
+      try {
+        const result = await topFoodCollection.findOne({ _id: new ObjectId(req.params.id) });
+        res.send(result);
+      } catch (error) {
+        console.error('Error retrieving single top food:', error);
+        res.status(500).send('Internal Server Error');
+      }
+    });
+    
 
     app.get("/singleFood/:id",async(req,res)=>{
       const result=await foodCollection.findOne({_id:new ObjectId(req.params.id)})
